@@ -1,0 +1,47 @@
+# One pod, one container
+# Asking for 2 distinct GPUs with matching driver version
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gpu-test6
+
+---
+apiVersion: resource.k8s.io/v1beta1
+kind: ResourceClaimTemplate
+metadata:
+  namespace: gpu-test6
+  name: multiple-gpus
+spec:
+  spec:
+    devices:
+      requests:
+      - name: gpus
+        deviceClassName: gpu.example.com
+        allocationMode: ExactCount
+        count: 2
+      constraints:
+      - requests: []
+        matchAttribute: "gpu.example.com/driverVersion"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: gpu-test6
+  name: pod0
+  labels:
+    app: pod
+spec:
+  containers:
+  - name: ctr0
+    image: ubuntu:22.04
+    command: ["bash", "-c"]
+    args: ["export; trap 'exit 0' TERM; sleep 9999 & wait"]
+    resources:
+      claims:
+      - name: gpus
+  resourceClaims:
+  - name: gpus
+    resourceClaimTemplateName: multiple-gpus

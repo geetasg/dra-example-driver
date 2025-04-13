@@ -28,6 +28,12 @@ import (
 	"github.com/google/uuid"
 )
 
+func randomDriverVersion() string {
+	// Example publishes 8 devices. driverVersion will match for atleast 2 devices since we only sample between 1 and 5
+	major := 1 + rand.Intn(5) // Random number between 1 and 5
+	return fmt.Sprintf("%d.0.0", major)
+}
+
 func enumerateAllPossibleDevices(numGPUs int) (AllocatableDevices, error) {
 	seed := os.Getenv("NODE_NAME")
 	uuids := generateUUIDs(seed, numGPUs)
@@ -48,7 +54,7 @@ func enumerateAllPossibleDevices(numGPUs int) (AllocatableDevices, error) {
 						StringValue: ptr.To("LATEST-GPU-MODEL"),
 					},
 					"driverVersion": {
-						VersionValue: ptr.To("1.0.0"),
+						VersionValue: ptr.To(randomDriverVersion()),
 					},
 				},
 				Capacity: map[resourceapi.QualifiedName]resourceapi.DeviceCapacity{
