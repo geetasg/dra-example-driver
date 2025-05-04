@@ -22,8 +22,7 @@ spec:
         allocationMode: ExactCount
         count: 2
       constraints:
-      - requests: []
-        matchAttribute: "gpu.example.com/driverVersion"
+      - matchAttribute: "gpu.example.com/driverVersion"
 
 ---
 apiVersion: v1
